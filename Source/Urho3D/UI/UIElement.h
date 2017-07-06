@@ -272,6 +272,8 @@ public:
     void SetColor(const Color& color);
     /// Set color on one corner.
     void SetColor(Corner corner, const Color& color);
+	/// Overload SetColor(const Color& color) for just floats
+	void SetColor(float x, float y, float z);
     /// Set priority.
     void SetPriority(int priority);
     /// Set opacity.

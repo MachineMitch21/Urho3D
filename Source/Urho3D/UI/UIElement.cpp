@@ -885,6 +885,11 @@ void UIElement::SetColor(Corner corner, const Color& color)
     }
 }
 
+void UIElement::SetColor(float x, float y, float z) 
+{
+	SetColor(Color(x, y, z));
+}
+
 void UIElement::SetPriority(int priority)
 {
     if (priority_ == priority)

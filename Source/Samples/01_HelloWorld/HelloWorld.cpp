@@ -62,20 +62,29 @@ void HelloWorld::CreateText()
 
     // Construct new Text object
     SharedPtr<Text> helloText(new Text(context_));
+	SharedPtr<Text> randomText(new Text(context_));
 
     // Set String to display
     helloText->SetText("Hello World from Urho3D!");
+	randomText->SetText("Random text from Urho3D!");
 
     // Set font and text color
     helloText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 30);
     helloText->SetColor(Color(0.0f, 1.0f, 0.0f));
 
+	randomText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 30);
+	randomText->SetColor(Color(1.0f, 0.0f, 0.0f));
+
     // Align Text center-screen
     helloText->SetHorizontalAlignment(HA_CENTER);
     helloText->SetVerticalAlignment(VA_CENTER);
 
+	randomText->SetHorizontalAlignment(HA_LEFT);
+	randomText->SetVerticalAlignment(VA_BOTTOM);
+
     // Add Text instance to the UI root element
     GetSubsystem<UI>()->GetRoot()->AddChild(helloText);
+	GetSubsystem<UI>()->GetRoot()->AddChild(randomText);
 }
 
 void HelloWorld::SubscribeToEvents()

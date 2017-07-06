@@ -117,10 +117,14 @@ private:
     /// Handle application post-update. Update camera position after character has moved.
     void HandlePostUpdate(StringHash eventType, VariantMap& eventData);
 
+	void DisplayPlayerPosition();
+
     /// Touch utility object.
     SharedPtr<Touch> touch_;
     /// The controllable character component.
     WeakPtr<Character> character_;
     /// First person camera flag.
     bool firstPerson_;
+
+	Text* posText;
 };

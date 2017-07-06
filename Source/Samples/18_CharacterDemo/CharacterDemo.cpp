@@ -82,6 +82,8 @@ void CharacterDemo::Start()
     // Subscribe to necessary events
     SubscribeToEvents();
 
+	
+
     // Set the mouse mode to use in the sample
     Sample::InitMouseMode(MM_RELATIVE);
 }
@@ -184,7 +186,7 @@ void CharacterDemo::CreateCharacter()
 {
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
-    Node* objectNode = scene_->CreateChild("Jack");
+    Node* objectNode = scene_->CreateChild("Mutant");
     objectNode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
 
     // spin node
@@ -229,20 +231,25 @@ void CharacterDemo::CreateInstructions()
     UI* ui = GetSubsystem<UI>();
 
     // Construct new Text object, set string to display and font to use
-    Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText(
-        "Use WASD keys and mouse/touch to move\n"
-        "Space to jump, F to toggle 1st/3rd person\n"
-        "F5 to save scene, F7 to load"
-    );
-    instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
+    posText = ui->GetRoot()->CreateChild<Text>();
+	posText->SetText(character_->GetNode()->GetPosition().ToString());
+	posText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 32);
     // The text has multiple rows. Center them in relation to each other
-    instructionText->SetTextAlignment(HA_CENTER);
+	posText->SetTextAlignment(HA_CENTER);
 
+	posText->SetColor(Color(0.75f, 0.0f, 0.75f));
     // Position the text relative to the screen center
-    instructionText->SetHorizontalAlignment(HA_CENTER);
-    instructionText->SetVerticalAlignment(VA_CENTER);
-    instructionText->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
+	posText->SetHorizontalAlignment(HA_LEFT);
+	posText->SetVerticalAlignment(VA_BOTTOM);
+}
+
+void CharacterDemo::DisplayPlayerPosition() {
+
+	const Vector3 position = character_->GetNode()->GetPosition();
+
+	posText->SetText(	String(roundf(	position.x_							)) + ", " +
+						String(roundf(	position.y_ == -0 ? 0 : position.y_	)) + ", " +
+						String(roundf(	position.z_							)));
 }
 
 void CharacterDemo::SubscribeToEvents()
@@ -362,13 +369,17 @@ void CharacterDemo::HandlePostUpdate(StringHash eventType, VariantMap& eventData
 
     if (firstPerson_)
     {
-        cameraNode_->SetPosition(headNode->GetWorldPosition() + rot * Vector3(0.0f, 0.15f, 0.2f));
+		Vector3 intendedPos = headNode->GetWorldPosition() + rot * Vector3(0.0f, 0.15f, 0.2f);
+		
+		cameraNode_->SetPosition(intendedPos);
         cameraNode_->SetRotation(dir);
     }
     else
     {
         // Third person camera: position behind the character
         Vector3 aimPoint = characterNode->GetPosition() + rot * Vector3(0.0f, 1.7f, 0.0f);
+
+		Vector3 intendedPos = aimPoint;
 
         // Collide camera ray with static physics objects (layer bitmask 2) to ensure we see the character properly
         Vector3 rayDir = dir * Vector3::BACK;
@@ -379,7 +390,11 @@ void CharacterDemo::HandlePostUpdate(StringHash eventType, VariantMap& eventData
             rayDistance = Min(rayDistance, result.distance_);
         rayDistance = Clamp(rayDistance, CAMERA_MIN_DIST, CAMERA_MAX_DIST);
 
-        cameraNode_->SetPosition(aimPoint + rayDir * rayDistance);
+		intendedPos += rayDir * rayDistance;
+
+		cameraNode_->SetPosition(intendedPos);
         cameraNode_->SetRotation(dir);
+
+		DisplayPlayerPosition();
     }
 }
